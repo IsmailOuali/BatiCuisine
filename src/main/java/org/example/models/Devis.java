@@ -70,12 +70,12 @@ public class Devis {
 
     @Override
     public String toString() {
-        return "Devis{" +
-                "montantEstime=" + montantEstime +
-                ", dateEmission=" + dateEmission +
-                ", dateValidite=" + dateValidite +
-                ", accepte=" + accepte +
-                ", projectId=" + projet.getId() +
-                '}';
+        return "--- Devis ---\n" +
+                "Cout total du projet : " + montantEstime +
+                "\n Date d'emission : " + dateEmission +
+                "\n Date de validite : " + dateValidite +
+                ",\n Accepter ou non : " + accepte +
+                "\n Nom du projet : " + projet.getNomProjet() +
+                "---------------";
     }
 }

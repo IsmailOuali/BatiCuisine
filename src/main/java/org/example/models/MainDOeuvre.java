@@ -44,5 +44,13 @@ public class MainDOeuvre extends Composant{
         this.projet = projet;
     }
 
+    public int getProjetId(){
+        return projet.getId();
+    }
+
+    public void setProjetId(int projetId){
+        this.projet.setId(projetId);
+    }
+
 
 }

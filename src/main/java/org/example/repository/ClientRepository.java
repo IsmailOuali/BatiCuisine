@@ -16,11 +16,12 @@ public class ClientRepository   {
         this.clientDAO = new ClientDAOImpl(connection);
     }
 
-
-
-
     public void save(Client client) {
         clientDAO.addClient(client);
+    }
+
+    public Client getClientByName(String name) {
+        return clientDAO.findClientByName(name);
     }
 
     public Client findById(int id) {

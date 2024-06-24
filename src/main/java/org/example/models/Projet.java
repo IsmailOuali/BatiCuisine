@@ -70,4 +70,10 @@ public class Projet {
     public void setClient(Client client) {
         this.client = client;
     }
-}
+
+    public String toString() {
+        return "Client{" +
+                "id=" + id +
+                ", nom='" + nomProjet + ' ' +
+                '}';
+    }}

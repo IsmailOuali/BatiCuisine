@@ -28,7 +28,6 @@ public class ProjetDAOImpl implements ProjetDAO {
             stmt.setString(4, EtatProjet.EN_COURS.name());
             stmt.setInt(5, projet.getClientId());
 
-            // Use executeUpdate to execute the insert
             int affectedRows = stmt.executeUpdate();
 
             // Now retrieve the generated keys
@@ -37,7 +36,7 @@ public class ProjetDAOImpl implements ProjetDAO {
                     if (rs.next()) {
                         int generatedId = rs.getInt(1);
                         projet.setId(generatedId);
-                        System.out.println("Generated project ID in Java: " + projet.getId());  // Debugging output
+                        System.out.println("Generated project ID in Java: " + projet.getId());
                     } else {
                         System.out.println("Erreur: Aucun ID généré pour le projet.");
                     }

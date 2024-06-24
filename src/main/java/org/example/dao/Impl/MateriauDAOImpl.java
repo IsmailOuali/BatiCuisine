@@ -16,13 +16,20 @@ public class MateriauDAOImpl implements MateriauDAO {
     }
 
     public void addMateriau(Materiau materiau) throws SQLException {
-        // Check if the component already exists; if not, add it.
-        if (!composantExists(materiau.getId())) {
-            addComposant(new Composant(materiau.getNom(), "Materiau", 20.0));
+        if (!composantExistsByName(materiau.getNom())) {
+            Composant composant = new Composant(materiau.getNom(), "Materiau", materiau.getTauxTVA());
+            addComposant(composant);
+            materiau.setId(composant.getId());
         }
 
-        // SQL query for inserting a material
-        String query = "INSERT INTO Materiau (nom, typecomposant, tauxtva, coutUnitaire, quantite, coutTransport, coefficientQualite, project_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id";
+        // Check that the project is valid
+        if (materiau.getProjet() == null || materiau.getProjet().getId() <= 0) {
+            System.out.println("Erreur: Projet associé invalide.");
+            return;
+        }
+
+        // Insert Materiau using the generated composant ID
+        String query = "INSERT INTO Materiau (nom, typecomposant, tauxTVA, coutUnitaire, quantite, coutTransport, coefficientQualite, project_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id";
 
         try (PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, materiau.getNom());
@@ -32,28 +39,25 @@ public class MateriauDAOImpl implements MateriauDAO {
             stmt.setDouble(5, materiau.getQuantite());
             stmt.setDouble(6, materiau.getCoutTransport());
             stmt.setDouble(7, materiau.getCoefficientQualite());
-            stmt.setInt(8, materiau.getProjet().getId()); // Use setInt for project ID
+            stmt.setInt(8, materiau.getProjet().getId());
 
-            // Execute the update and retrieve the generated keys
             int affectedRows = stmt.executeUpdate();
             if (affectedRows > 0) {
                 try (ResultSet rs = stmt.getGeneratedKeys()) {
                     if (rs.next()) {
                         int generatedId = rs.getInt(1);
                         materiau.setId(generatedId);
-                        System.out.println("Generated Materiau ID in Java: " + materiau.getId());  // Debugging output
-                        System.out.println("Materiau added successfully.");
-                    } else {
-                        System.out.println("Erreur: Aucun ID généré pour le matériau.");
+                        System.out.println("Generated Materiau ID in Java: " + materiau.getId());
                     }
                 }
-            } else {
-                System.out.println("Erreur: Aucune ligne affectée par l'insertion.");
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            System.out.println("Erreur lors de l'ajout du matériau : " + e.getMessage());
+            throw e;
         }
     }
+
+
 
     private boolean composantExists(int id) throws SQLException {
         String checkQuery = "SELECT COUNT(*) FROM Composant WHERE id = ?";
@@ -68,21 +72,44 @@ public class MateriauDAOImpl implements MateriauDAO {
     }
 
     private void addComposant(Composant composant) throws SQLException {
-        String insertQuery = "INSERT INTO Composant (id, nom, typeComposant, tauxTVA) VALUES (?, ?, ?, ?)";
-        try (PreparedStatement stmt = conn.prepareStatement(insertQuery)) {
-            stmt.setInt(1, composant.getId());
-            stmt.setString(2, composant.getNom());
-            stmt.setString(3, composant.getTypeComposant());
-            stmt.setDouble(4, composant.getTauxTVA());
-            try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    composant.setId(generatedKeys.getInt(1));
+        // No need to insert the 'id' field, as it's auto-incremented
+        String insertQuery = "INSERT INTO Composant (nom, typeComposant, tauxTVA) VALUES (?, ?, ?)";
+
+        try (PreparedStatement stmt = conn.prepareStatement(insertQuery, Statement.RETURN_GENERATED_KEYS)) {
+            stmt.setString(1, composant.getNom());
+            stmt.setString(2, composant.getTypeComposant());
+            stmt.setDouble(3, composant.getTauxTVA());
+
+            int affectedRows = stmt.executeUpdate();
+            if (affectedRows > 0) {
+                // Retrieve the generated key
+                try (ResultSet rs = stmt.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        int generatedId = rs.getInt(1);
+                        composant.setId(generatedId); // Set the auto-generated ID to the object
+                        System.out.println("Generated Composant ID in Java: " + composant.getId());
+                    }
                 }
             }
-
-            stmt.executeUpdate();
             System.out.println("Composant added successfully.");
+        } catch (SQLException e) {
+            System.out.println("Error adding Composant: " + e.getMessage());
+            throw e;
         }
+    }
+
+
+    public boolean composantExistsByName(String nom) throws SQLException {
+        String query = "SELECT COUNT(*) FROM Composant WHERE nom = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, nom);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        }
+        return false;
     }
 
 }

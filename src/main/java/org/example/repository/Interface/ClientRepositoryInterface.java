@@ -13,5 +13,6 @@ public interface ClientRepositoryInterface {
     public void deleteById(int id);
     public void update(Client client);
     public List<Client> findAll();
+    Client getClientByName(String name);
     public Client findById(int id);
 }

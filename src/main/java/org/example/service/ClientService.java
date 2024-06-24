@@ -14,6 +14,10 @@ public class ClientService {
         this.clientRepository = new ClientRepository(connection);
     }
 
+    public Client getClient(String name){
+        return clientRepository.getClientByName(name);
+    }
+
     public void createClient(Client client) {
         clientRepository.save(client);
     }
@@ -33,5 +37,6 @@ public class ClientService {
     public void deleteClient(int id) {
         clientRepository.deleteById(id);
     }
+
 }
 

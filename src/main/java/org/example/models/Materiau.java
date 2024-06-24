@@ -54,4 +54,13 @@ public class Materiau extends Composant{
     public void setProjet(Projet projet){
         this.projet = projet;
     }
+
+    public int getProjetId()
+    {
+        return projet.getId();
+    }
+
+    public void setProjetId(int projetId){
+        this.projet.setId(projetId);
+    }
 }

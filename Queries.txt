@@ -1,0 +1,26 @@
+CREATE TABLE Client (id SERIAL PRIMARY KEY,nom VARCHAR(255),adresse VARCHAR(255),telephone VARCHAR(50),estprofessionnel BOOLEAN);           
+
+
+CREATE TABLE Composant (id SERIAL PRIMARY KEY,nom VARCHAR(255) NOT NULL,typeComposant VARCHAR(50) NOT NULL,tauxTVA DOUBLE PRECISION NOT NULL);
+
+
+CREATE TABLE Materiau (coutUnitaire DOUBLE PRECISION NOT NULL,quantite DOUBLE PRECISION NOT NULL,coutTransport DOUBLE PRECISION NOT NULL,coefficientQualite DOUBLE PRECISION NOT NULL) inherits Composant;
+
+CREATE TABLE MainDOeuvre (tauxHoraire DOUBLE PRECISION NOT NULL,heuresTravail DOUBLE PRECISION NOT NULL,productiviteOuvrier DOUBLE PRECISION NOT NULL) inherits Composant;
+
+
+
+CREATE TABLE Projet (id SERIAL PRIMARY KEY,nomProjet VARCHAR(255) NOT NULL,margeBeneficiaire DOUBLE PRECISION NOT NULL,coutTotal DOUBLE PRECISION NOT NULL,etatProjet etatprojet_enum NOT NULL,client_id INT NOT NULL,FOREIGN KEY (client_id) REFERENCES Client(id) ON DELETE CASCADE);
+
+ALTER TABLE materiau ADD COLUMN project_id INT NOT NULL;
+ALTER TABLE maindoeuvre ADD COLUMN project_id INT NOT NULL;
+
+ALTER TABLE materiau ADD CONSTRAINT fk_project_materiau FOREIGN KEY (project_id) REFERENCES project(id);
+ALTER TABLE maindoeuvre ADD CONSTRAINT fk_project_maindoeuvre FOREIGN KEY (project_id) REFERENCES project(id);
+
+
+
+
+
+
+CREATE TABLE devis (id SERIAL PRIMARY KEY,montantEstime DOUBLE PRECISION NOT NULL,dateEmission DATE NOT NULL,dateValidite DATE NOT NULL,accepte BOOLEAN NOT NULL,project_id INT NOT NULL,FOREIGN KEY (project_id) REFERENCES projet(id) ON DELETE CASCADE);
