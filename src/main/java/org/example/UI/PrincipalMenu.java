@@ -6,7 +6,15 @@ public class PrincipalMenu {
     static Scanner scan  = new Scanner(System.in);
     static int  choix;
 
-    public static int display()
+    public static   String displayName()
+    {
+
+        System.out.println("\n---  Entrer votre nom ---\n");
+        String nom = scan.nextLine();
+        return nom;
+}
+
+        public static int displayPMenu()
     {
         System.out.println("\n---  Menu Principal ---\n");
         System.out.println(" 1- Creer un nouveau  projet");
