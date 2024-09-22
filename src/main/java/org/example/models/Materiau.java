@@ -8,7 +8,7 @@ public class Materiau extends Composant{
     private double coefficientQualite;
 
     public Materiau( String nom, double tauxTVA , double coutUnitaire, double quantite, double coefficientQualite) {
-        super( nom, "Material", tauxTVA);
+        super(nom, "Material", tauxTVA);
         this.coutUnitaire = coutUnitaire;
         this.quantite = quantite;
         this.coutTransport = coefficientQualite;
@@ -19,7 +19,7 @@ public class Materiau extends Composant{
         return coutUnitaire;
     }
     public void setCoutUnitaire(double coutUnitaire)
-    {
+{
         this.coutUnitaire = coutUnitaire;
     }
     public double getQuantite() {

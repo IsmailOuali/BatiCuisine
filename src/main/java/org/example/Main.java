@@ -18,7 +18,6 @@ public class Main {
         MainDOeuvreService mainDOeuvreService = new MainDOeuvreService(conn);
         Scanner scanner = new Scanner(System.in);
 
-        // Menu loop
         boolean keepRunning = true;
         while (keepRunning) {
             System.out.println("--- Menu Principal ---");
@@ -27,11 +26,10 @@ public class Main {
             System.out.println("3. Quitter");
             System.out.print("Choisissez une option : ");
             int choice = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
+            scanner.nextLine();
 
             switch (choice) {
                 case 1:
-                    // Add materials using MateriauService
                     boolean addMoreMateriau = true;
                     while (addMoreMateriau) {
                         System.out.println("--- Ajout des matériaux ---");
@@ -45,10 +43,10 @@ public class Main {
                         double coutTransport = scanner.nextDouble();
                         System.out.print("Entrez le coefficient de qualité du matériau (1.0 = standard, > 1.0 = haute qualité) : ");
                         double coefficientQualite = scanner.nextDouble();
-                        scanner.nextLine(); // Consume newline
+                        scanner.nextLine();
 
                         Materiau materiau = new Materiau( nom, 20, coutUnitaire, quantite, coefficientQualite);
-                        materiauService.createMateriau(materiau);  // Using the service instead of DAO
+                        materiauService.createMateriau(materiau);
                         System.out.println("Matériau ajouté avec succès !");
 
                         System.out.print("Voulez-vous ajouter un autre matériau ? (y/n) : ");
@@ -57,7 +55,6 @@ public class Main {
                     break;
 
                 case 2:
-                    // Add labor using MainDOeuvreService
                     boolean addMoreMainDOeuvre = true;
                     while (addMoreMainDOeuvre) {
                         System.out.println("--- Ajout de la main-d'œuvre ---");
@@ -71,10 +68,10 @@ public class Main {
                         double heuresTravail = scanner.nextDouble();
                         System.out.print("Entrez le facteur de productivité (1.0 = standard, > 1.0 = haute productivité) : ");
                         double productiviteOuvrier = scanner.nextDouble();
-                        scanner.nextLine(); // Consume newline
+                        scanner.nextLine();
 
                         MainDOeuvre mainDOeuvre = new MainDOeuvre( nom, 21, tauxHoraire, heuresTravail, productiviteOuvrier);
-                        mainDOeuvreService.createMainDOeuvre(mainDOeuvre);  // Using the service instead of DAO
+                        mainDOeuvreService.createMainDOeuvre(mainDOeuvre);
                         System.out.println("Main-d'œuvre ajoutée avec succès !");
 
                         System.out.print("Voulez-vous ajouter un autre type de main-d'œuvre ? (y/n) : ");
@@ -83,7 +80,6 @@ public class Main {
                     break;
 
                 case 3:
-                    // Exit the program
                     keepRunning = false;
                     System.out.println("Fermeture du programme...");
                     break;
