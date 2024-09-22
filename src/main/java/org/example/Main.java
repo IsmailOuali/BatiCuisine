@@ -47,7 +47,7 @@ public class Main {
                         double coefficientQualite = scanner.nextDouble();
                         scanner.nextLine(); // Consume newline
 
-                        Materiau materiau = new Materiau(0, nom, 20, coutUnitaire, quantite, coefficientQualite);
+                        Materiau materiau = new Materiau( nom, 20, coutUnitaire, quantite, coefficientQualite);
                         materiauService.createMateriau(materiau);  // Using the service instead of DAO
                         System.out.println("Matériau ajouté avec succès !");
 
@@ -73,7 +73,7 @@ public class Main {
                         double productiviteOuvrier = scanner.nextDouble();
                         scanner.nextLine(); // Consume newline
 
-                        MainDOeuvre mainDOeuvre = new MainDOeuvre(0, nom, 21, tauxHoraire, heuresTravail, productiviteOuvrier);
+                        MainDOeuvre mainDOeuvre = new MainDOeuvre( nom, 21, tauxHoraire, heuresTravail, productiviteOuvrier);
                         mainDOeuvreService.createMainDOeuvre(mainDOeuvre);  // Using the service instead of DAO
                         System.out.println("Main-d'œuvre ajoutée avec succès !");
 

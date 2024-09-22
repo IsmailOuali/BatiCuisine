@@ -6,9 +6,8 @@ public class Composant {
     protected String typeComposant;
     protected double tauxTVA;
 
-    public Composant(int id, String nom, String typeComposant, double tauxTVA)
+    public Composant(String nom, String typeComposant, double tauxTVA)
     {
-        this.id = id;
         this.nom = nom;
         this.typeComposant = typeComposant;
         this.tauxTVA = tauxTVA;
