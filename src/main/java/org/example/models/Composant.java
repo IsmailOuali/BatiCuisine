@@ -1,6 +1,6 @@
 package org.example.models;
 
-public abstract class Composant {
+public class Composant {
     protected int id;
     protected String nom;
     protected String typeComposant;

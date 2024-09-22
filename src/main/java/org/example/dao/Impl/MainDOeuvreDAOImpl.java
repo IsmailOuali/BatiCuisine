@@ -19,7 +19,7 @@ public class MainDOeuvreDAOImpl implements MainDOeuvreDAO {
 
     public void addMainDOeuvre(MainDOeuvre mainDOeuvre) throws SQLException {
         if (!composantExists(mainDOeuvre.getId())) {
-            addComposant(new Composant(mainDOeuvre.getId(), "Default Name", "MainDOeuvre", 20.0));
+            addComposant(new Composant(mainDOeuvre.getId(), mainDOeuvre.getNom(), "MainDOeuvre", 20.0));
         }
 
         String query = "INSERT INTO MainDOeuvre ( id, tauxHoraire, heuresTravail, productiviteOuvrier) VALUES (?, ?, ?, ?)";
