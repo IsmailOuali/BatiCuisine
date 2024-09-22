@@ -19,7 +19,7 @@ public class MateriauDAOImpl implements MateriauDAO {
 
     public void addMateriau(Materiau materiau) throws SQLException {
         if (!composantExists(materiau.getId())) {
-            addComposant(new Composant(materiau.getId(), materiau.getNom(),"Materiau", 20.0));
+            addComposant(new Composant( materiau.getNom(),"Materiau", 20.0));
         }
 
         String query = "INSERT INTO Materiau (id, coutUnitaire, quantite, coutTransport, coefficientQualite) VALUES (?, ?, ?, ?, ?)";
@@ -57,6 +57,11 @@ public class MateriauDAOImpl implements MateriauDAO {
             stmt.setString(2, composant.getNom());
             stmt.setString(3, composant.getTypeComposant());
             stmt.setDouble(4, composant.getTauxTVA());
+            try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    composant.setId(generatedKeys.getInt(1));
+                }
+            }
 
             stmt.executeUpdate();
             System.out.println("Composant added successfully.");
