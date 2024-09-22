@@ -22,7 +22,6 @@ public class Client {
         this.estprofessionnel = estprofessionnel;
     }
 
-    // Getters and Setters
     public int getId() {
         return id;
     }
