@@ -1,17 +1,19 @@
 package org.example.repository;
 
 
+import org.example.dao.Impl.ClientDAOImpl;
 import org.example.models.Client;
 import org.example.dao.ClientDAO;
 import org.example.repository.Interface.ClientRepositoryInterface;
 
+import java.sql.Connection;
 import java.util.List;
 
 public class ClientRepository   {
     private  ClientDAO clientDAO;
 
-    public ClientRepository(ClientDAO clientDAO) {
-        this.clientDAO = clientDAO;
+    public ClientRepository(Connection connection) {
+        this.clientDAO = new ClientDAOImpl(connection);
     }
 
 
