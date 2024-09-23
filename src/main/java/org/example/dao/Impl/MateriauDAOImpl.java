@@ -22,13 +22,15 @@ public class MateriauDAOImpl implements MateriauDAO {
             addComposant(new Composant( materiau.getNom(),"Materiau", 20.0));
         }
 
-        String query = "INSERT INTO Materiau (id, coutUnitaire, quantite, coutTransport, coefficientQualite) VALUES (?, ?, ?, ?, ?)";
+        String query = "INSERT INTO Materiau (nom, typecomposant,tauxtva, coutUnitaire, quantite, coutTransport, coefficientQualite) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, materiau.getId());
-            stmt.setDouble(2, materiau.getCoutUnitaire());
-            stmt.setDouble(3, materiau.getQuantite());
-            stmt.setDouble(4, materiau.getCoutTransport());
-            stmt.setDouble(5, materiau.getCoefficientQualite());
+            stmt.setString(1, materiau.getNom());
+            stmt.setString(2, materiau.getTypeComposant());
+            stmt.setDouble(3, materiau.getTauxTVA());
+            stmt.setDouble(4, materiau.getCoutUnitaire());
+            stmt.setDouble(5, materiau.getQuantite());
+            stmt.setDouble(6, materiau.getCoutTransport());
+            stmt.setDouble(7, materiau.getCoefficientQualite());
 
             stmt.executeUpdate();
             System.out.println("Materiau added successfully.");

@@ -22,12 +22,14 @@ public class MainDOeuvreDAOImpl implements MainDOeuvreDAO {
             addComposant(new Composant(mainDOeuvre.getNom(), "MainDOeuvre", 20.0));
         }
 
-        String query = "INSERT INTO MainDOeuvre ( id, tauxHoraire, heuresTravail, productiviteOuvrier) VALUES (?, ?, ?, ?)";
+        String query = "INSERT INTO MainDOeuvre (  nom, typeComposant, tauxTVA,tauxHoraire, heuresTravail, productiviteOuvrier) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, mainDOeuvre.getId());
-            stmt.setDouble(2, mainDOeuvre.getTauxHoraire());
-            stmt.setDouble(3, mainDOeuvre.getHeursTravail());
-            stmt.setDouble(4, mainDOeuvre.getProductiviteOuvrier());
+            stmt.setString(1, mainDOeuvre.getNom());
+            stmt.setString(2, mainDOeuvre.getTypeComposant());
+            stmt.setDouble(3, mainDOeuvre.getTauxTVA());
+            stmt.setDouble(4, mainDOeuvre.getTauxHoraire());
+            stmt.setDouble(5, mainDOeuvre.getHeursTravail());
+            stmt.setDouble(6, mainDOeuvre.getProductiviteOuvrier());
 
             stmt.executeUpdate();
             System.out.println("MainDOeuvre added successfully.");
