@@ -4,13 +4,14 @@ package org.example.service;
 import org.example.models.Client;
 import org.example.repository.ClientRepository;
 
+import java.sql.Connection;
 import java.util.List;
 
 public class ClientService {
     private final ClientRepository clientRepository;
 
-    public ClientService(ClientRepository clientRepository) {
-        this.clientRepository = clientRepository;
+    public ClientService(Connection connection) {
+        this.clientRepository = new ClientRepository(connection);
     }
 
     public void createClient(Client client) {
