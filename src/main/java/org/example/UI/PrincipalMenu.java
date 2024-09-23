@@ -1,11 +1,10 @@
 package org.example.UI;
 
-import org.example.models.Client;
-import org.example.models.MainDOeuvre;
-import org.example.models.Materiau;
+import org.example.models.*;
 import org.example.service.ClientService;
 import org.example.service.MainDOeuvreService;
 import org.example.service.MateriauService;
+import org.example.service.ProjetService;
 import org.example.utils.DatabaseConnection;
 
 import java.sql.Connection;
@@ -14,6 +13,7 @@ import java.util.Scanner;
 
 public class PrincipalMenu {
     static Connection conn = DatabaseConnection.getConnection();
+
 
 
     public static  void displayClient() {
@@ -124,8 +124,7 @@ public class PrincipalMenu {
         scanner.close();
     }
 
-    public static void menuProjet()
-    {
+    public static void menuProjet() throws SQLException {
         Scanner scan = new Scanner(System.in);
         int choix;
 
@@ -140,7 +139,7 @@ public class PrincipalMenu {
 
         switch (choix){
             case 1:
-                System.out.println("\n--- Create un projet.");
+                projectMenu();
                 break;
 
             case 2:
@@ -150,6 +149,20 @@ public class PrincipalMenu {
             case 3:
                 System.out.println("\n--- afficher un projet.");
         }
+    }
+
+    public static void projectMenu() throws SQLException {
+        ProjetService projetService = new ProjetService(conn);
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("\n--- Menu ---\n");
+        System.out.println("Entrer le nom du projet:");
+        String nom = scanner.nextLine();
+        System.out.println("Entrer la surface de la cuisine (m²):");
+        double surface = scanner.nextDouble();
+        Projet projet = new Projet(nom, 0, 0, EtatProjet.EN_COURS, 1);
+        projetService.addProjet(projet);
+
+        diplayMenu();
     }
 }
 
