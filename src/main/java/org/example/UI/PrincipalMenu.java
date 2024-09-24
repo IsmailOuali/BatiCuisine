@@ -9,6 +9,7 @@ import org.example.utils.DatabaseConnection;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.SQLOutput;
 import java.util.Scanner;
 
 public class PrincipalMenu {
@@ -16,36 +17,44 @@ public class PrincipalMenu {
 
 
 
-    public static  void displayClient() {
-
+    public static void displayClient() throws SQLException {
         ClientService clientService = new ClientService(conn);
         boolean estProfessionel = false;
 
-        Scanner scan  = new Scanner(System.in);
+        Scanner scan = new Scanner(System.in);
         System.out.println("\n---  Entrer votre nom ---\n");
         String nom = scan.nextLine();
-        System.out.println("---Entrer votre adresse ---\n");
+        System.out.println("--- Entrer votre adresse ---\n");
         String adresse = scan.nextLine();
-        System.out.println("---Entrer votre telephone ---\n");
-        String telephone  = scan.nextLine();
-        System.out.println("--- Etes vous professionel (yes/no)---\n");
+        System.out.println("--- Entrer votre telephone ---\n");
+        String telephone = scan.nextLine();
+        System.out.println("--- Etes-vous professionel (yes/no) ---\n");
         String p = scan.nextLine();
-        if(p.equalsIgnoreCase("yes")){
-             estProfessionel = true;
-        }else if(p.equalsIgnoreCase("no")){
-             estProfessionel = false;
+
+        if (p.equalsIgnoreCase("yes")) {
+            estProfessionel = true;
+        } else if (p.equalsIgnoreCase("no")) {
+            estProfessionel = false;
         }
 
         Client client = new Client(nom, adresse, telephone, estProfessionel);
         clientService.createClient(client);
-        System.out.println("Client ajoutée avec succès !");
 
+        int clientId = client.getId();
 
+        if (clientId == 0) {
+            System.out.println("Erreur: Impossible de récupérer l'ID du client.");
+            return;
+        }
+
+        System.out.println("Client ajouté avec succès !");
+
+        projectMenu(client);
     }
 
 
-    public static void diplayMenu() throws SQLException {
 
+    public static void diplayMenu(Projet projet) throws SQLException {
         MateriauService materiauService = new MateriauService(conn);
         MainDOeuvreService mainDOeuvreService = new MainDOeuvreService(conn);
         Scanner scanner = new Scanner(System.in);
@@ -77,7 +86,7 @@ public class PrincipalMenu {
                         double coefficientQualite = scanner.nextDouble();
                         scanner.nextLine();
 
-                        Materiau materiau = new Materiau( nom, 20, coutUnitaire, quantite, coefficientQualite);
+                        Materiau materiau = new Materiau(nom, 12, coutUnitaire, quantite, coefficientQualite, projet);
                         materiauService.createMateriau(materiau);
                         System.out.println("Matériau ajouté avec succès !");
 
@@ -88,11 +97,10 @@ public class PrincipalMenu {
 
                 case 2:
                     boolean addMoreMainDOeuvre = true;
+
                     while (addMoreMainDOeuvre) {
                         System.out.println("--- Ajout de la main-d'œuvre ---");
-                        System.out.print("Entrez le type de main-d'œuvre (e.g., Ouvrier de base, Spécialiste) : ");
-                        String type = scanner.nextLine();
-                        System.out.print("Entrez le nom de main-d'œuvre: ");
+                        System.out.print("Entrez le nom de la main-d'œuvre : ");
                         String nom = scanner.nextLine();
                         System.out.print("Entrez le taux horaire de cette main-d'œuvre (€/h) : ");
                         double tauxHoraire = scanner.nextDouble();
@@ -102,7 +110,8 @@ public class PrincipalMenu {
                         double productiviteOuvrier = scanner.nextDouble();
                         scanner.nextLine();
 
-                        MainDOeuvre mainDOeuvre = new MainDOeuvre( nom, 21, tauxHoraire, heuresTravail, productiviteOuvrier);
+                        // Create MainDOeuvre with the current Projet
+                        MainDOeuvre mainDOeuvre = new MainDOeuvre(nom, 12,tauxHoraire,heuresTravail, productiviteOuvrier, projet);
                         mainDOeuvreService.createMainDOeuvre(mainDOeuvre);
                         System.out.println("Main-d'œuvre ajoutée avec succès !");
 
@@ -120,8 +129,8 @@ public class PrincipalMenu {
                     System.out.println("Option invalide, veuillez réessayer.");
             }
         }
-
         scanner.close();
+
     }
 
     public static void menuProjet() throws SQLException {
@@ -130,16 +139,15 @@ public class PrincipalMenu {
 
         System.out.println("\n--- Menu ---\n");
         System.out.println("1- Creer un projet.");
-        System.out.println("2- Afficher le cout d'un projet.");
-        System.out.println("3- Afficher les projets existants.");
-        System.out.println("4- Quitter.\n");
+        System.out.println("2- Afficher les projets existants.");
+        System.out.println("3- Quitter.\n");
 
         System.out.println("--- Entrer votre choix");
         choix = scan.nextInt();
 
         switch (choix){
             case 1:
-                projectMenu();
+                clientMenu();
                 break;
 
             case 2:
@@ -147,22 +155,64 @@ public class PrincipalMenu {
                 break;
 
             case 3:
-                System.out.println("\n--- afficher un projet.");
+                System.out.println("Fermeture du programme...");
+                break;
+
+            default:
+                System.out.println("Option invalide, veuillez réessayer.");
         }
     }
 
-    public static void projectMenu() throws SQLException {
+    public static Projet projectMenu(Client client) throws SQLException {
         ProjetService projetService = new ProjetService(conn);
         Scanner scanner = new Scanner(System.in);
         System.out.println("\n--- Menu ---\n");
         System.out.println("Entrer le nom du projet:");
         String nom = scanner.nextLine();
-        System.out.println("Entrer la surface de la cuisine (m²):");
-        double surface = scanner.nextDouble();
-        Projet projet = new Projet(nom, 0, 0, EtatProjet.EN_COURS, 1);
+        System.out.println("Entrer la marge");
+        double margeBenigiciaire = scanner.nextDouble();
+
+        Projet projet = new Projet(nom, margeBenigiciaire, 0, EtatProjet.EN_COURS, client);
         projetService.addProjet(projet);
 
-        diplayMenu();
+        diplayMenu(projet);
+
+        return projet;
+    }
+
+    public static Client searchClient(int id){
+        ClientService clientService = new ClientService(conn);
+        Client client = clientService.getClient(id);
+        if(client != null){
+            return client;
+        }else{
+            return null;
+        }
+    }
+
+    public static void clientMenu() throws SQLException {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("\n--- Menu Client ---\n");
+        System.out.println("1- Creer un nouveau client");
+        System.out.println("2- Rechercher un client existant");
+        System.out.println("3- Quitter.\n");
+        System.out.println("--- Entrer votre choix");
+        int choix = scanner.nextInt();
+
+        switch (choix){
+            case 1:
+                displayClient();
+                break;
+            case 2:
+                System.out.println("--- calcluler le cout.");
+                break;
+            case 3:
+                System.out.println("Fermeture du programme...");
+                break;
+
+        }
+
     }
 }
 

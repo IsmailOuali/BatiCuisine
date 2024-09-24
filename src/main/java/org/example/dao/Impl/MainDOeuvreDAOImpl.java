@@ -3,6 +3,7 @@ package org.example.dao.Impl;
 import org.example.dao.MainDOeuvreDAO;
 import org.example.models.Composant;
 import org.example.models.MainDOeuvre;
+import org.example.models.Projet;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -19,10 +20,12 @@ public class MainDOeuvreDAOImpl implements MainDOeuvreDAO {
 
     public void addMainDOeuvre(MainDOeuvre mainDOeuvre) throws SQLException {
         if (!composantExists(mainDOeuvre.getId())) {
+            Projet projet = new Projet();
             addComposant(new Composant(mainDOeuvre.getNom(), "MainDOeuvre", 20.0));
+
         }
 
-        String query = "INSERT INTO MainDOeuvre (  nom, typeComposant, tauxTVA,tauxHoraire, heuresTravail, productiviteOuvrier) VALUES (?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO MainDOeuvre (  nom, typeComposant, tauxTVA,tauxHoraire, heuresTravail, productiviteOuvrier, project_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, mainDOeuvre.getNom());
             stmt.setString(2, mainDOeuvre.getTypeComposant());
@@ -30,12 +33,19 @@ public class MainDOeuvreDAOImpl implements MainDOeuvreDAO {
             stmt.setDouble(4, mainDOeuvre.getTauxHoraire());
             stmt.setDouble(5, mainDOeuvre.getHeursTravail());
             stmt.setDouble(6, mainDOeuvre.getProductiviteOuvrier());
+            stmt.setInt(7, mainDOeuvre.getProjet().getId());
 
-            stmt.executeUpdate();
-            System.out.println("MainDOeuvre added successfully.");
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                int generatedId = rs.getInt(1);
+                mainDOeuvre.setId(generatedId);
+                System.out.println("Generated client ID in Java: " + mainDOeuvre.getId());  // Debugging output
+            } else {
+                System.out.println("Erreur: Aucun ID généré pour le client.");
+            }
         } catch (SQLException e) {
-            System.out.println("Error in adding MainDOeuvre");
-            e.printStackTrace();
+            System.out.println(e.getMessage());
+
         }
     }
 

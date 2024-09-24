@@ -7,20 +7,14 @@ public class Client {
     private String telephone;
     private boolean estprofessionnel;
 
-    public Client(String nom, String adresse, String telephone, boolean estprofessionnel) {
+    public Client(String nom, String adresse, String telephone, boolean estprofessionnel)
+    {
         this.nom = nom;
         this.adresse = adresse;
         this.telephone = telephone;
         this.estprofessionnel = estprofessionnel;
     }
 
-    public Client(int id, String nom, String adresse, String telephone, boolean estprofessionnel) {
-        this.id = id;
-        this.nom = nom;
-        this.adresse = adresse;
-        this.telephone = telephone;
-        this.estprofessionnel = estprofessionnel;
-    }
 
     public int getId() {
         return id;

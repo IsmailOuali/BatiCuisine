@@ -5,11 +5,14 @@ public class MainDOeuvre extends Composant{
     private double tauxHoraire;
     private double heursTravail;
     private double productiviteOuvrier;
-    public MainDOeuvre(String nom, double tauxTVA, double tauxHoraire, double heursTravail, double productiviteOuvrier) {
+    private Projet projet;
+
+    public MainDOeuvre(String nom, double tauxTVA, double tauxHoraire, double heursTravail, double productiviteOuvrier, Projet projet) {
         super(nom, "MainDOeuvre", tauxTVA);
         this.tauxHoraire = tauxHoraire;
         this.heursTravail = heursTravail;
         this.productiviteOuvrier = productiviteOuvrier;
+        this.projet = projet;
     }
 
     public double getTauxHoraire() {
@@ -31,6 +34,14 @@ public class MainDOeuvre extends Composant{
     }
     public void setProductiviteOuvrier(double productiviteOuvrier) {
         this.productiviteOuvrier = productiviteOuvrier;
+    }
+
+    public Projet getProjet(){
+        return projet;
+    }
+
+    public void setProjet(Projet projet){
+        this.projet = projet;
     }
 
 

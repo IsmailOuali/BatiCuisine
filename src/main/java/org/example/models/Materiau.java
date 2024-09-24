@@ -6,13 +6,15 @@ public class Materiau extends Composant{
     private double quantite;
     private double coutTransport;
     private double coefficientQualite;
+    private Projet projet;
 
-    public Materiau( String nom, double tauxTVA , double coutUnitaire, double quantite, double coefficientQualite) {
+    public Materiau( String nom, double tauxTVA , double coutUnitaire, double quantite, double coefficientQualite, Projet projet) {
         super(nom, "Material", tauxTVA);
         this.coutUnitaire = coutUnitaire;
         this.quantite = quantite;
         this.coutTransport = coefficientQualite;
         this.coefficientQualite = coefficientQualite;
+        this.projet = projet;
     }
 
     public double getCoutUnitaire() {
@@ -43,5 +45,13 @@ public class Materiau extends Composant{
 
     public void setCoutTransport(double coutTransport) {
         this.coutTransport = coutTransport;
+    }
+
+    public Projet getProjet(){
+        return projet;
+    }
+
+    public void setProjet(Projet projet){
+        this.projet = projet;
     }
 }

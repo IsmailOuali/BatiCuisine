@@ -17,15 +17,23 @@ public class ClientDAOImpl implements ClientDAO {
 
     @Override
     public void addClient(Client client) {
-        String query = "INSERT INTO client (nom, adresse, telephone, estprofessionnel) VALUES (?, ?, ?, ?)";
+        String query = "INSERT INTO Client (nom, adresse, telephone, estprofessionnel) VALUES (?, ?, ?, ?) RETURNING id";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, client.getNom());
             stmt.setString(2, client.getAdresse());
             stmt.setString(3, client.getTelephone());
             stmt.setBoolean(4, client.isEstprofessionnel());
-            stmt.executeUpdate();
+
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                int generatedId = rs.getInt(1);
+                client.setId(generatedId);
+                System.out.println("Generated client ID in Java: " + client.getId());  // Debugging output
+            } else {
+                System.out.println("Erreur: Aucun ID généré pour le client.");
+            }
         } catch (SQLException e) {
-            System.out.println(e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -37,7 +45,6 @@ public class ClientDAOImpl implements ClientDAO {
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 return new Client(
-                        rs.getInt("id"),
                         rs.getString("nom"),
                         rs.getString("adresse"),
                         rs.getString("telephone"),
@@ -58,7 +65,6 @@ public class ClientDAOImpl implements ClientDAO {
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next()) {
                 clients.add(new Client(
-                        rs.getInt("id"),
                         rs.getString("nom"),
                         rs.getString("adresse"),
                         rs.getString("telephone"),

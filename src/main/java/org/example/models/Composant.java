@@ -5,6 +5,7 @@ public class Composant {
     protected String nom;
     protected String typeComposant;
     protected double tauxTVA;
+    protected Projet projet;
 
     public Composant(String nom, String typeComposant, double tauxTVA)
     {
@@ -13,6 +14,10 @@ public class Composant {
         this.tauxTVA = tauxTVA;
     }
 
+
+    public Composant(){
+
+    }
     public int getId()
     {
         return id;
@@ -46,5 +51,12 @@ public class Composant {
 
     public void setTauxTVA(double tauxTVA){
         this.tauxTVA = tauxTVA;
+    }
+
+    public Projet getProjet(){
+        return projet;
+    }
+    public void setProjet(Projet projet){
+        this.projet = projet;
     }
 }

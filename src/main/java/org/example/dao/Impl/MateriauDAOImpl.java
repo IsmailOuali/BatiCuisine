@@ -3,11 +3,9 @@ package org.example.dao.Impl;
 import org.example.dao.MateriauDAO;
 import org.example.models.Composant;
 import org.example.models.Materiau;
+import org.example.models.Projet;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class MateriauDAOImpl implements MateriauDAO {
 
@@ -18,12 +16,15 @@ public class MateriauDAOImpl implements MateriauDAO {
     }
 
     public void addMateriau(Materiau materiau) throws SQLException {
+        // Check if the component already exists; if not, add it.
         if (!composantExists(materiau.getId())) {
-            addComposant(new Composant( materiau.getNom(),"Materiau", 20.0));
+            addComposant(new Composant(materiau.getNom(), "Materiau", 20.0));
         }
 
-        String query = "INSERT INTO Materiau (nom, typecomposant,tauxtva, coutUnitaire, quantite, coutTransport, coefficientQualite) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+        // SQL query for inserting a material
+        String query = "INSERT INTO Materiau (nom, typecomposant, tauxtva, coutUnitaire, quantite, coutTransport, coefficientQualite, project_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id";
+
+        try (PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, materiau.getNom());
             stmt.setString(2, materiau.getTypeComposant());
             stmt.setDouble(3, materiau.getTauxTVA());
@@ -31,12 +32,26 @@ public class MateriauDAOImpl implements MateriauDAO {
             stmt.setDouble(5, materiau.getQuantite());
             stmt.setDouble(6, materiau.getCoutTransport());
             stmt.setDouble(7, materiau.getCoefficientQualite());
+            stmt.setInt(8, materiau.getProjet().getId()); // Use setInt for project ID
 
-            stmt.executeUpdate();
-            System.out.println("Materiau added successfully.");
+            // Execute the update and retrieve the generated keys
+            int affectedRows = stmt.executeUpdate();
+            if (affectedRows > 0) {
+                try (ResultSet rs = stmt.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        int generatedId = rs.getInt(1);
+                        materiau.setId(generatedId);
+                        System.out.println("Generated Materiau ID in Java: " + materiau.getId());  // Debugging output
+                        System.out.println("Materiau added successfully.");
+                    } else {
+                        System.out.println("Erreur: Aucun ID généré pour le matériau.");
+                    }
+                }
+            } else {
+                System.out.println("Erreur: Aucune ligne affectée par l'insertion.");
+            }
         } catch (SQLException e) {
-            System.out.println("Error in adding Materiau");
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 

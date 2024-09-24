@@ -1,8 +1,10 @@
 package org.example.dao.Impl;
 
 import org.example.dao.ProjetDAO;
+import org.example.models.Client;
 import org.example.models.Projet;
 import org.example.models.EtatProjet;
+import org.example.service.ClientService;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -17,16 +19,38 @@ public class ProjetDAOImpl implements ProjetDAO {
 
     @Override
     public void addProjet(Projet projet) throws SQLException {
-        String query = "INSERT INTO Projet (nomProjet, margeBeneficiaire, coutTotal, etatProjet, client_id) VALUES (?, ?, ?, ?::etatprojet_enum, ?)";
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+        String query = "INSERT INTO Projet (nomProjet, margeBeneficiaire, coutTotal, etatProjet, client_id) VALUES (?, ?, ?, ?::etatprojet_enum, ?) RETURNING id";
+
+        try (PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, projet.getNomProjet());
             stmt.setDouble(2, projet.getMargeBeneficiaire());
             stmt.setDouble(3, projet.getCoutTotal());
             stmt.setString(4, EtatProjet.EN_COURS.name());
             stmt.setInt(5, projet.getClientId());
-            stmt.executeUpdate();
+
+            // Use executeUpdate to execute the insert
+            int affectedRows = stmt.executeUpdate();
+
+            // Now retrieve the generated keys
+            if (affectedRows > 0) {
+                try (ResultSet rs = stmt.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        int generatedId = rs.getInt(1);
+                        projet.setId(generatedId);
+                        System.out.println("Generated project ID in Java: " + projet.getId());  // Debugging output
+                    } else {
+                        System.out.println("Erreur: Aucun ID généré pour le projet.");
+                    }
+                }
+            } else {
+                System.out.println("Erreur: Aucune ligne affectée par l'insertion.");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
+
+
 
     @Override
     public Projet getProjetById(int id) throws SQLException {
@@ -35,12 +59,16 @@ public class ProjetDAOImpl implements ProjetDAO {
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
+                int idClient = rs.getInt("idClient");
+
+                ClientService clientService = new ClientService(conn);
+                Client client = clientService.getClient(idClient);
                 return new Projet(
                         rs.getString("nomProjet"),
                         rs.getDouble("margeBeneficiaire"),
                         rs.getDouble("coutTotal"),
                         EtatProjet.valueOf(rs.getString("etatProjet")),
-                        rs.getInt("client_id")
+                        client
                 );
             }
         }
@@ -54,12 +82,16 @@ public class ProjetDAOImpl implements ProjetDAO {
         try (Statement stmt = conn.createStatement()) {
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next()) {
+                int idClient = rs.getInt("idClient");
+
+                ClientService clientService = new ClientService(conn);
+                Client client = clientService.getClient(idClient);
                 projets.add(new Projet(
                         rs.getString("nomProjet"),
                         rs.getDouble("margeBeneficiaire"),
                         rs.getDouble("coutTotal"),
                         EtatProjet.valueOf(rs.getString("etatProjet")),
-                        rs.getInt("client_id")
+                        client
                 ));
             }
         }

@@ -9,20 +9,26 @@ public class Projet {
     private double margeBeneficiaire;
     private double coutTotal;
     private EtatProjet etatProjet;
-    private int clientId;
+    private Client client;
 
 
 
-    public Projet(String nomProjet, double margeBeneficiaire, double coutTotal, EtatProjet etatProjet, int clientId) {
+    public Projet(String nomProjet, double margeBeneficiaire, double coutTotal, EtatProjet etatProjet, Client client) {
         this.nomProjet = nomProjet;
         this.margeBeneficiaire = margeBeneficiaire;
         this.coutTotal = coutTotal;
         this.etatProjet = etatProjet;
-        this.clientId = clientId;
+        this.client = client;
+    }
+    public Projet(){
+
     }
 
     public int getId() {
         return id;
+    }
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getNomProjet() {
@@ -58,10 +64,10 @@ public class Projet {
     }
 
     public int getClientId() {
-        return clientId;
+        return client.getId();
     }
 
-    public void setClientId(int clientId) {
-        this.clientId = clientId;
+    public void setClient(Client client) {
+        this.client = client;
     }
 }
